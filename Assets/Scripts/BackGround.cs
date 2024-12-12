@@ -12,14 +12,14 @@ public class BackGround : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      if (GameManager.instance.gameOver) {
+      if (GameManager.instance.IsGameOver()) {
         return;
       }
         transform.position += Vector3.left * moveSpeed * Time.deltaTime;
 
-        if (transform.position.x < -50f)
+        if (transform.position.x < -80f)
         {
-            transform.position += new Vector3(126f, 0, 0);
+            transform.position += new Vector3(182f, 0, 0);
         }
     }
 }

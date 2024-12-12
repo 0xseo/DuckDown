@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      if (GameManager.instance.gameOver) {
+      if (GameManager.instance.IsGameOver()) {
         return;
       }
         transform.position += Vector3.left * moveSpeed * Time.deltaTime;

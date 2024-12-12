@@ -22,6 +22,11 @@ public class EnemyRespawn : MonoBehaviour
         StartCoroutine("EnemyRoutine");
     }
 
+    public void StopEnemyRoutine()
+    {
+        StopCoroutine("EnemyRoutine");
+    }
+
     IEnumerator EnemyRoutine()
     {
         yield return new WaitForSeconds(1.5f);
@@ -35,9 +40,6 @@ public class EnemyRespawn : MonoBehaviour
 
     void SpawnEnemy()
     {
-      if (GameManager.instance.gameOver) {
-        return;
-      }
         int randomIndex = Random.Range(0, enemies.Length);
         float randomPosY = Random.Range(arrPosY[0], arrPosY[1]);
 
