@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
   [SerializeField]
   private float reverseInterval = 8f;
   private float lastReverseTime = 0;
+  private int reverseCount = 0;
 
   private int score = 0;
 
@@ -31,6 +33,22 @@ public class GameManager : MonoBehaviour
   private float lastScoreTime = 0;
 
   private float deltaTime = 0f;
+
+  // get 3 images of ui panel and turn into black when lose life
+  [SerializeField]
+  private Image[] lifeImages;
+
+  private int life = 3;
+
+  [SerializeField]
+  private GameObject countdownPanel;
+
+  [SerializeField]
+  private TextMeshProUGUI countdownText;
+
+  private float countdownStartTime;
+  private bool isCountdownActive = false;
+
 
 
   void Awake()
@@ -58,12 +76,32 @@ public class GameManager : MonoBehaviour
         isReverse = !isReverse;
       }
       lastReverseTime = Time.time;
+
+      if (isReverse) {
+        countdownPanel.SetActive(false);
+      }
+    }
+
+    if (!gameOver && Time.time - lastReverseTime > reverseInterval - 3f && !isCountdownActive) {
+      countdownPanel.SetActive(true);
+      countdownStartTime = Time.time;
+      isCountdownActive = true;
+    }
+
+    if (!gameOver && isCountdownActive) {
+      float countdown = 3f - (Time.time - countdownStartTime);
+      if (countdown <= 0) {
+        countdownPanel.SetActive(false);
+        isCountdownActive = false;
+      } else {
+        countdownText.SetText(Mathf.CeilToInt(countdown).ToString());
+      }
     }
 
     if (!gameOver && isReverse) {
       scoreText.color = Color.red;
-      // 이미지 깜빡거리게 하기
-        reverseImage.SetActive(!reverseImage.activeSelf);
+      reverseImage.SetActive(reverseCount % 4 == 0);
+      reverseCount++;
     } else {
       scoreText.color = Color.white;
       reverseImage.SetActive(false);
@@ -73,15 +111,18 @@ public class GameManager : MonoBehaviour
       lastReverseTime = Time.time;
     }
 
-    Debug.Log(1.0f / deltaTime);
   }
 
   public void GameOver() {
     Debug.Log("Game Over!");
+    countdownPanel.SetActive(false);
     gameOver = true;
     EnemyRespawn enemySpawner = FindObjectOfType<EnemyRespawn>();
     if (enemySpawner != null) {
       enemySpawner.StopEnemyRoutine();
+    }
+    foreach (Image lifeImage in lifeImages) {
+      lifeImage.color = new Color(0f, 0f, 0f, 0f);
     }
     Invoke("ShowGameOverPanel", 0.1f);
   }
@@ -89,6 +130,11 @@ public class GameManager : MonoBehaviour
   public void Restart() {
     Debug.Log("Restart!");
     gameOver = false;
+    life = 3;
+    foreach (Image lifeImage in lifeImages) {
+      // set color to FF0000
+      lifeImage.color = new Color(1f, 0f, 0f, 1f);
+    }
     score = 0;
     scoreText.SetText(score.ToString());
     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -107,5 +153,20 @@ public class GameManager : MonoBehaviour
 
   void ShowGameOverPanel() {
     gameOverPanel.SetActive(true);
+  }
+
+  public int GetLife() {
+    return life;
+  }
+
+  public void LoseLife() {
+    life--;
+    if (lifeImages[2-life] != null) {
+      lifeImages[2-life].color = new Color(0f, 0f, 0f, 1f);
+    }
+    Debug.Log("Life: " + life);
+    if (life <= 0) {
+      GameOver();
+    }
   }
 }

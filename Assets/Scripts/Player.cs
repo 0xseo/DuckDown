@@ -41,11 +41,19 @@ public class Player : MonoBehaviour
 
         if (horizontalInput < 0)
         {
+          if (reverseFlag == -1) {
+            spriteRenderer.sprite = spriteRight;
+          } else {
             spriteRenderer.sprite = spriteLeft;
+          }
         }
         else if (horizontalInput > 0)
         {
+          if (reverseFlag == -1) {
+            spriteRenderer.sprite = spriteLeft;
+          } else {
             spriteRenderer.sprite = spriteRight;
+          }
         }
 
         Vector3 moveTo = new Vector3(horizontalInput * reverseFlag, verticalInput * reverseFlag, 0f);
@@ -64,8 +72,10 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) {
       if (other.gameObject.tag == "Enemy") {
-        Destroy(gameObject);
-        GameManager.instance.GameOver();
+        GameManager.instance.LoseLife();
+        if (GameManager.instance.GetLife() <= 0) {
+          Destroy(gameObject);
+        } 
       }
     }
 }

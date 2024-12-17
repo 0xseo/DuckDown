@@ -19,7 +19,7 @@ public class BackGround : MonoBehaviour
 
         if (transform.position.x < -80f)
         {
-            transform.position += new Vector3(182f, 0, 0);
+            transform.position += new Vector3(180f, 0, 0);
         }
     }
 }
