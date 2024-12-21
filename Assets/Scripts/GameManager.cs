@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
 
     if (!gameOver && isReverse) {
       scoreText.color = Color.red;
-      reverseImage.SetActive(reverseCount % 4 == 0);
+      reverseImage.SetActive(reverseCount % 7 == 0);
       reverseCount++;
     } else {
       scoreText.color = Color.white;
